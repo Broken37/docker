@@ -1,0 +1,98 @@
+{% load static %}
+<link type="text/css" rel="stylesheet" href="{% static 'tsa/styles/semantic.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'tsa/styles/visualization.css' %}">
+
+<script>
+    function set_loading(event) {
+        event.classList.add('loading', 'disabled');
+        document.getElementById('loading-text').style.visibility = "visible";
+    };
+</script>
+
+<style>
+    .title {
+        font-size: 4em;
+        text-align: center;
+        font-weight: bolder;
+        padding-top: 80px;
+        padding-bottom: 80px;
+        margin-bottom: 40px;
+        background-color: rgb(0, 86, 86);
+        color: white;
+        background-image: url({% static 'tsa/images/index-bg.gif' %});
+        background-size: cover;
+    }
+</style>
+
+{% if not title %}
+
+<div class="title3">You must upload a dataset first!</div>
+
+<div id="model-btn">
+    <a class="ui button" href="{% url 'index' %}">
+        Back to Home Page
+    </a>
+</div>
+
+{% else %}
+
+<div class="title">Visualizing the "{{ title|truncatechars:20 }}" Dataset!</div>
+
+<div id="plot">
+    <img src="{{ plot }}">
+</div>
+
+<div class="title2">You can see a few starting and ending data points here!</div>
+
+<div class="table-container">
+    <table class="ui teal table" style="width: 75%">
+        <thead>
+            <tr>
+                {% for index in start_indices %}
+                    <th class="center aligned">{{ index }}</th>
+                {% endfor %}
+                    <th class="center aligned dots">. . .</th>
+                {% for index in end_indices %}
+                    <th class="center aligned">{{ index }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for data in start_data %}
+                    <td class="center aligned">{{ data }}</td>
+                {% endfor %}
+                    <td class="center aligned dots">. . .</td>
+                {% for data in end_data %}
+                    <td class="center aligned">{{ data }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="title2">Want to find out more? Here is the data summary!</div>
+
+<div class="table-container">
+    <table class="ui celled definition teal table" style="width: 25%; margin-bottom: 60px;">
+        <thead>
+        </thead>
+        <tbody>
+            {% for key, value in summary.items %}
+                <tr>
+                    <td class="center aligned row-title">{{ key }}</td>
+                    <td class="center aligned">{{ value|floatformat:"-2" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="model-btn">
+    <a class="ui button" href="{% url 'preprocess' tsa_id=id %}" onclick="set_loading(this)">
+        View Data Preprocessing
+    </a>
+    <div id="loading-text" style="visibility: hidden; color: grey; margin-top: 1em;">Please wait while we are processing the data...</div>
+</div>
+
+{% endif %}
